@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZTL Firenze: posso entrare?</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --bg: #f4f5f3; --card: #ffffff; --ink: #1c2420; --muted: #66706b; --line: #e3e6e2; --accent: #1f3a2e; --accent2: #2e8b57;
+    --verde: #2e8b57; --rosso: #c0392b; --arancio: #e08a00; --grigio: #8a97a6; --blu: #2f6db5;
+    --wsx: 360px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); display: flex; flex-direction: column; }
+  header { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: var(--accent); color: #fff; flex: none; z-index: 2000; }
+  header h1 { margin: 0; font-size: 16px; white-space: nowrap; }
+  #sottotitolo { display: none; }
+  #chip { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.14); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #chip.ok { background: #2e8b57; } #chip.no { background: #c0392b; } #chip.dub { background: #e08a00; }
+  #btnInfo { border: 1px solid rgba(255,255,255,.5); background: transparent; color: #fff; border-radius: 999px; padding: 3px 11px; font: inherit; cursor: pointer; white-space: nowrap; }
+  .avviso { background: #fff7e0; color: #5a4300; padding: 10px 16px; font-size: 13px; border-bottom: 1px solid #ecd88f; max-height: 40vh; overflow-y: auto; z-index: 2000; flex: none; }
+  .avviso[hidden] { display: none; }
+  #errore { background: #fde3e0; color: #7a1c13; padding: 10px 16px; display: none; flex: none; }
+  main { flex: 1; position: relative; min-height: 0; }
+  #map { position: absolute; inset: 0; }
+
+  /* pannelli laterali a scomparsa */
+  .drawer { position: absolute; top: 10px; bottom: 74px; z-index: 1000; background: var(--bg); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.18); overflow-y: auto; padding: 10px; transition: transform .22s ease; }
+  #pannSx { left: 10px; width: var(--wsx); transform: translateX(calc(-100% - 60px)); }
+  body.sx-open #pannSx { transform: none; }
+  .tab { position: absolute; top: 50%; z-index: 1001; border: 0; background: var(--accent); color: #fff; font: 600 13px system-ui; padding: 12px 7px; cursor: pointer;
+    writing-mode: vertical-rl; box-shadow: 0 2px 8px rgba(0,0,0,.25); transition: left .22s ease, right .22s ease; }
+  #tabSx { left: 0; border-radius: 0 10px 10px 0; transform: translateY(-50%); }
+  body.sx-open #tabSx { left: calc(var(--wsx) + 20px); }
+
+  /* legenda fissa */
+  #legendaFissa { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 1002; background: rgba(255,255,255,.96); border: 1px solid var(--line);
+    border-radius: 12px; padding: 6px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.15); max-width: calc(100% - 20px); font-size: 12px; display: flex; flex-wrap: wrap; gap: 3px 14px; justify-content: center; }
+  #legendaFissa .voce { white-space: nowrap; }
+
+  /* schede */
+  details.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; margin-bottom: 8px; }
+  details.card > summary { cursor: pointer; font-size: 14px; font-weight: 700; list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+  details.card > summary::-webkit-details-marker { display: none; }
+  details.card > summary::after { content: "\25BE"; font-size: 14px; color: var(--muted); transition: transform .15s; }
+  details.card:not([open]) > summary::after { transform: rotate(-90deg); }
+  details.card[open] > summary { border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+  details.card > :last-child { margin-bottom: 12px; }
+  details.tend > summary { font-size: 15px; }
+  .sub { background: #f7f8f6; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .sub h2 { margin: 0 0 6px; font-size: 14px; display: flex; align-items: center; }
+  details.sub > summary { cursor: pointer; list-style: none; display: flex; align-items: center; margin: -2px 0 2px; }
+  details.sub > summary::-webkit-details-marker { display: none; }
+  details.sub > summary::after { content: "\25BE"; margin-left: auto; color: var(--muted); transition: transform .15s; }
+  details.sub:not([open]) > summary::after { transform: rotate(-90deg); }
+  details.sub[open] > summary { margin-bottom: 8px; }
+  .tt { display: flex; flex-direction: column; min-width: 0; }
+  .tt b { font-size: 14px; } .tt small { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  details.sub[open] .tt small { display: none; }
+  details.sotto > summary { color: var(--muted); font-size: 12px; }
+  details.card p { margin: 4px 0; }
+  .passo { display: inline-flex; width: 20px; height: 20px; border-radius: 50%; background: var(--accent2); color: #fff; font-size: 12px; align-items: center; justify-content: center; margin-right: 8px; flex: none; }
+  details.card > summary > span { display: flex; align-items: center; }
+  h3 { margin: 10px 0 4px; font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  .muted { color: var(--muted); font-size: 12.5px; }
+  label { display: block; margin: 6px 0; }
+  input[type=datetime-local], input[type=text], select { font: inherit; padding: 6px 8px; max-width: 100%; border: 1px solid #cfd4cf; border-radius: 8px; background: #fff; }
+  select { width: 100%; }
+  label.chk { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; margin: 5px 0; cursor: pointer; }
+  label.chk input { margin-top: 3px; }
+  button { font: inherit; padding: 6px 12px; cursor: pointer; border: 1px solid #cfd4cf; border-radius: 8px; background: #fff; }
+  button.primario { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+  .riga { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); }
+  .riga:first-child { border-top: 0; }
+  .pallino { width: 12px; height: 12px; border-radius: 50%; flex: none; border: 1px solid rgba(0,0,0,.2); display: inline-block; vertical-align: middle; }
+  .riga b { min-width: 16px; }
+  .riga span.t { font-size: 12.5px; }
+  ul.compatta { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
+  .leaflet-popup-content { font-size: 13px; }
+  .riepilogo p { margin: 6px 0; font-size: 13px; }
+  .verdetto { padding: 8px 10px; border-radius: 8px; margin: 8px 0; font-weight: 600; }
+  .v-si { background: #dff3e6; color: #14532d; } .v-no { background: #fbdcd8; color: #7a1c13; } .v-inc { background: #ffeccc; color: #6b4200; }
+  details.sotto summary { cursor: pointer; font-size: 13px; color: var(--accent2); margin: 6px 0; }
+  details.sotto label { font-size: 13px; }
+  .riga-cerca { display: flex; gap: 6px; } .riga-cerca input { flex: 1; min-width: 0; }
+  @media (max-width: 800px) {
+    :root { --wsx: calc(100vw - 58px); }
+    header h1 { display: none; } #chip { font-size: 12px; white-space: normal; line-height: 1.2; }
+    .drawer { bottom: 96px; }
+    #pannSx { left: 40px; }
+    body.sx-open #tabSx { left: 0; }
+    #legendaFissa { font-size: 11px; gap: 2px 10px; padding: 5px 8px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="titolo">ZTL Firenze</h1>
+  <div id="chip" class="dub">...</div>
+  <button id="btnInfo" type="button">&#9432; Avviso</button>
+  <span id="sottotitolo"></span>
+</header>
+<div class="avviso" id="avviso" hidden></div>
+<div id="errore"></div>
+<main>
+  <div id="map"></div>
+
+  <button class="tab" id="tabSx" type="button">Menu</button>
+
+  <aside class="drawer" id="pannSx">
+    <details class="card tend" id="tend1" open>
+      <summary>Il mio veicolo, quando e dove</summary>
+      <details class="sub" id="cardProfilo">
+        <summary><span class="passo">1</span><span class="tt"><b id="pfTitolo"></b><small id="pfSintesi"></small></span></summary>
+        <details class="sotto"><summary>Come funziona</summary><p class="muted" id="pfIntro"></p><p class="muted" id="pfComeTrovare"></p><p class="muted" id="pfSalva"></p></details>
+        <label><span id="pfLCat"></span><select id="pfCat"></select></label>
+        <label><span id="pfLAli"></span><select id="pfAli"></select></label>
+        <label id="pfEuroWrap"><span id="pfLEuro"></span>
+          <select id="pfEuro"><option value="0">Euro 0</option><option value="1">Euro 1</option><option value="2">Euro 2</option><option value="3">Euro 3</option><option value="4">Euro 4</option><option value="5">Euro 5</option><option value="6" selected>Euro 6</option></select></label>
+        <details class="sotto"><summary id="pfLEsenzioni"></summary><div id="pfEsenzioni"></div></details>
+        <label style="margin-top:8px"><span id="pfLPass"></span><select id="pfPass"></select></label>
+        <label id="pfSettoreWrap" style="display:none"><span id="pfLSettore"></span><select id="pfSettore"><option>A</option><option selected>B</option><option>O</option><option>F</option><option>G</option></select></label>
+        <div id="pfRiepilogo" class="riepilogo"></div>
+      </details>
+      <details class="sub" id="cardQuandoDove" open>
+        <summary><span class="passo">2</span><span class="tt"><b>Quando e dove</b><small id="qdSintesi"></small></span></summary>
+        <h3 style="margin-top:0">Quando</h3>
+        <label>Data e ora (ora di Firenze)
+          <input type="datetime-local" id="quando">
+        </label>
+        <button id="adesso" type="button" class="primario">Adesso</button>
+        <h3 id="dvTitolo"></h3>
+        <form id="dvForm" class="riga-cerca"><input type="text" id="dvInput"><button type="submit" id="dvBtn" class="primario"></button></form>
+        <div id="dvRisultato"></div>
+        <details class="sotto"><summary>Note</summary><p class="muted" id="infoStagione"></p><p class="muted" id="dvNota"></p></details>
+      </details>
+    </details>
+
+    <details class="card tend" id="tend2">
+      <summary>Mappa e settori</summary>
+      <div class="sub">
+        <h2>Mappa e stato dei settori</h2>
+        <label>Cosa mostrare sulla mappa
+          <select id="perimetro">
+            <option value="diurna">ZTL di giorno (A, B, O)</option>
+            <option value="notturna">ZTL notte estiva (A, B, O, F, G)</option>
+          </select>
+        </label>
+        <label class="chk"><input type="checkbox" id="vistaPass" checked> Colora in base al mio veicolo e pass</label>
+        <label class="chk"><input type="checkbox" id="mostraVarchi" checked> Varchi Scudo Verde (rosa)</label>
+        <label class="chk"><input type="checkbox" id="mostraPerimetroSV" checked> Perimetro Scudo Verde (stima da verificare)</label>
+        <label class="chk"><input type="checkbox" id="mostraPorte"> Porte telematiche</label>
+        <h3>Stato dei settori</h3>
+        <div id="elencoSettori"></div>
+        <p class="muted" id="notaFestivo"></p>
+      </div>
+    </details>
+
+    <details class="card tend" id="tend3">
+      <summary>Informazioni aggiuntive</summary>
+      <div class="sub" id="cardOrari"></div>
+      <div class="sub" id="cardScudo"></div>
+      <p class="muted" id="fonteDati" style="padding:0 4px"></p>
+    </details>
+  </aside>
+
+  <div id="legendaFissa"></div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+"use strict";
+
+/* ---------- utilita' ---------- */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function pad(n) { return String(n).padStart(2, "0"); }
+function minutiDa(hhmm) { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; }
+function isoGiorno(y, m, d) { const g = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); return g === 0 ? 7 : g; }
+function aggiungiGiorni(y, m, d, n) {
+  const t = new Date(Date.UTC(y, m - 1, d + n));
+  return { y: t.getUTCFullYear(), m: t.getUTCMonth() + 1, d: t.getUTCDate() };
+}
+function chiaveData(o) { return o.y * 10000 + o.m * 100 + o.d; }
+// primo giorno della settimana (ISO) di un mese: es. primo giovedi' (4) di aprile (4)
+function primoGiornoDelMese(y, mese, giornoIso) {
+  for (let d = 1; d <= 7; d++) if (isoGiorno(y, mese, d) === giornoIso) return { y, m: mese, d };
+}
+// Pasqua (algoritmo di Gauss/Meeus) -> lunedi' dell'Angelo
+function lunediDellAngelo(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100;
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mese = Math.floor((h + l - 7 * m + 114) / 31);
+  const giorno = ((h + l - 7 * m + 114) % 31) + 1;
+  return aggiungiGiorni(y, mese, giorno, 1);
+}
+function ePasquettaOFestivoNazionale(p) {
+  const fissi = ["1-1", "6-1", "25-4", "1-5", "2-6", "15-8", "1-11", "8-12", "25-12", "26-12"];
+  if (fissi.includes(p.d + "-" + p.m)) return true;
+  const lp = lunediDellAngelo(p.y);
+  return chiaveData(lp) === chiaveData(p);
+}
+
+/* ---------- ora attuale a Firenze ---------- */
+function oraDiFirenze() {
+  const parti = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Rome", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+  }).formatToParts(new Date());
+  const o = {};
+  parti.forEach(p => { o[p.type] = p.value; });
+  return { y: +o.year, m: +o.month, d: +o.day, h: +o.hour, min: +o.minute };
+}
+function leggiInput() {
+  const v = document.getElementById("quando").value;
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v);
+  if (!m) return oraDiFirenze();
+  return { y: +m[1], m: +m[2], d: +m[3], h: +m[4], min: +m[5] };
+}
+function scriviInput(p) {
+  document.getElementById("quando").value = p.y + "-" + pad(p.m) + "-" + pad(p.d) + "T" + pad(p.h) + ":" + pad(p.min);
+}
+
+/* ---------- calcolo dello stato (dal file rules.json) ---------- */
+let RULES, TESTI;
+
+function stagione(y) {
+  return {
+    inizio: chiaveData(primoGiornoDelMese(y, 4, 4)),   // primo giovedi' di aprile
+    fine: chiaveData(primoGiornoDelMese(y, 10, 7))     // prima domenica di ottobre
+  };
+}
+function nottiInStagione(dataInizioNotte) {
+  const s = stagione(dataInizioNotte.y);
+  const k = chiaveData(dataInizioNotte);
+  return k >= s.inizio && k <= s.fine;
+}
+
+function statoSettore(sigla, p) {
+  const sett = RULES.settori[sigla];
+  const gg = isoGiorno(p.y, p.m, p.d);
+  const min = p.h * 60 + p.min;
+  const risultato = { stato: "non_attiva", regime: null };
+
+  // 1) notte estiva
+  if (sett.ztl_notturna_estiva) {
+    const finestre = RULES.orari.ztl_notturna_estiva.finestre[sett.gruppo_orari_notturni].elenco;
+    for (const f of finestre) {
+      let inizioNotte = null;
+      if (gg === f.da_giorno && min >= minutiDa(f.da_ora)) inizioNotte = { y: p.y, m: p.m, d: p.d };
+      else if (gg === f.a_giorno && min < minutiDa(f.a_ora)) inizioNotte = aggiungiGiorni(p.y, p.m, p.d, -1);
+      if (inizioNotte && nottiInStagione(inizioNotte)) return { stato: "attiva", regime: "notturna" };
+    }
+  }
+  // 2) giorno
+  if (sett.ztl_diurna) {
+    for (const f of RULES.orari.ztl_diurna.fasce) {
+      if (f.giorni.includes(gg) && min >= minutiDa(f.dalle) && min < minutiDa(f.alle)) {
+        const festivoInfrasettimanale = gg <= 5 && ePasquettaOFestivoNazionale(p);
+        return { stato: festivoInfrasettimanale ? "incerto" : "attiva", regime: "diurna" };
+      }
+    }
+  }
+  return risultato;
+}
+
+/* ---------- colori e profilo ---------- */
+const COL = { rosa: "#ec4899", verde: "#2e8b57", verdeChiaro: "#7fc79a", rosso: "#c0392b", arancio: "#e08a00", grigio: "#8a97a6", blu: "#2f6db5" };
+const SETTORI = ["A", "B", "O", "F", "G"];
+let PROFILO = { cat: "auto", ali: "benzina_ibrida", euro: 6, esenzioni: [], pass: "res_B", settore: "B" };
+
+function salvaProfilo() { try { localStorage.setItem("ztl_profilo", JSON.stringify(PROFILO)); } catch (e) {} }
+function caricaProfilo() {
+  try { const v = JSON.parse(localStorage.getItem("ztl_profilo")); if (v && v.cat && v.pass) PROFILO = Object.assign(PROFILO, v); } catch (e) {}
+}
+function voceCatalogo(id) { return RULES.pass_catalogo.voci.find(v => v.id === id); }
+function catVeicolo(id) { return RULES.scudo_verde.profilo_veicolo.categorie.find(c => c.id === id); }
+
+// Scudo Verde: il veicolo e' nella tabella dei divieti?
+function valutaScudoVerde() {
+  const pv = RULES.scudo_verde.profilo_veicolo;
+  const cat = catVeicolo(PROFILO.cat);
+  const ali = pv.alimentazioni[PROFILO.ali];
+  let vietato = false, motivo = "";
+  if (ali.esente) { return { vietato: false, motivo: ali.nota || "" }; }
+  if (ali.non_in_tabella) { return { vietato: false, motivo: ali.nota || "" }; }
+  const righe = RULES.scudo_verde.veicoli_vietati.filter(r => r.categoria === cat.tabella && r.alimentazione === ali.riga_tabella);
+  for (const r of righe) if (r.euro_vietate.includes(Number(PROFILO.euro))) { vietato = true; motivo = r.categoria + " " + r.alimentazione + " Euro " + r.euro_vietate.join("-"); }
+  if (ali.nota) motivo = (motivo ? motivo + ". " : "") + ali.nota;
+  const esente = vietato && PROFILO.esenzioni.length > 0;
+  return { vietato: vietato && !esente, vietatoSenzaEsenzione: vietato, esente, motivo };
+}
+
+function valutaPass(sigla) {
+  // ritorna { transito: bool, sosta: "si"|"limitata"|"no", testo }
+  const v = voceCatalogo(PROFILO.pass);
+  if (!v) return { transito: false, sosta: "no" };
+  if (v.ambito === "non_modellato") return { transito: null, sosta: "no" };
+  if (v.ambito === "un_settore") return { transito: sigla === PROFILO.settore, sosta: sigla === PROFILO.settore ? v.sosta_nel_settore : "no" };
+  return { transito: !!v.transito[sigla], sosta: v.sosta[sigla] };
+}
+
+function haLimiteOrario(p) {
+  const v = voceCatalogo(PROFILO.pass);
+  if (!v || !v.orario_fino) return false;
+  if (v.orario_esente_elettrici && PROFILO.ali === "elettrica") return false;
+  return p.h * 60 + p.min >= minutiDa(v.orario_fino);
+}
+
+function descrizioneStato(sigla, st) {
+  if (st.stato === "non_attiva") return { colore: COL.grigio, testo: "ZTL non attiva" };
+  const regime = st.regime === "notturna" ? " (notte estiva)" : " (giorno)";
+  if (st.stato === "incerto") return { colore: COL.arancio, testo: "ZTL probabilmente attiva (festivo: controlla i cartelli)" + regime };
+  return { colore: COL.rosso, testo: "ZTL attiva" + regime };
+}
+
+// esito per un settore con il profilo scelto -> { colore, testo, tratteggio, esito: si|libero|transito|no|incerto|nm }
+function esitoProfilo(sigla, st, p) {
+  const sv = valutaScudoVerde();
+  if (sv.vietato) return { colore: COL.rosso, testo: "Veicolo vietato dallo Scudo Verde (24 ore su 24)", esito: "no" };
+  if (st.stato === "non_attiva") return { colore: COL.verdeChiaro, testo: "ZTL non attiva: puoi circolare", esito: "libero" };
+  const ps = valutaPass(sigla);
+  const dubbio = st.stato === "incerto" ? " (se la ZTL e' attiva)" : "";
+  if (ps.transito === null) return { colore: COL.arancio, testo: TESTI.profilo.pass_non_modellato, esito: "nm", tratteggio: true };
+  if (ps.transito && haLimiteOrario(p)) return { colore: COL.rosso, testo: "Con questo pass dopo le " + voceCatalogo(PROFILO.pass).orario_fino + " non puoi circolare" + dubbio, esito: "no" };
+  if (!ps.transito) return { colore: COL.rosso, testo: "Con il tuo pass non puoi circolare qui" + dubbio, esito: "no" };
+  if (ps.sosta === "si") return { colore: COL.verde, testo: "Puoi circolare e sostare" + dubbio, esito: "si" };
+  return { colore: COL.verde, testo: "Puoi passare; sosta " + (ps.sosta === "limitata" ? "limitata" : "non prevista") + dubbio, tratteggio: true, esito: "transito" };
+}
+
+/* ---------- mappa ---------- */
+let map, GEO = {};
+let layerPoligoni = null, layerVarchi = null, layerPorte = null, layerPerimetroSV = null;
+
+function costruisciMappa() {
+  map = L.map("map", { zoomControl: false }).setView([43.7714, 11.2542], 14);
+  L.control.zoom({ position: "bottomright" }).addTo(map);
+  ["pannSx", "legendaFissa", "tabSx"].forEach(id => {
+    const el = document.getElementById(id);
+    L.DomEvent.disableClickPropagation(el); L.DomEvent.disableScrollPropagation(el);
+  });
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | dati ZTL: Comune di Firenze (CC BY 4.0)'
+  }).addTo(map);
+}
+
+function disegnaPoligoni() {
+  if (layerPoligoni) map.removeLayer(layerPoligoni);
+  const perimetro = document.getElementById("perimetro").value;
+  const vistaPass = document.getElementById("vistaPass").checked;
+  const p = leggiInput();
+  const dati = GEO[perimetro];
+  // A sopra B, cosi' il settore A resta visibile se B lo contiene
+  const ordine = { B: 1, O: 1, F: 1, G: 1, A: 2 };
+  const features = dati.features.slice().sort((a, b) => (ordine[a.properties.tipologia] || 1) - (ordine[b.properties.tipologia] || 1));
+  layerPoligoni = L.geoJSON({ type: "FeatureCollection", features }, {
+    style: f => {
+      const s = f.properties.tipologia;
+      const st = statoSettore(s, p);
+      const d = vistaPass ? esitoProfilo(s, st, p) : descrizioneStato(s, st);
+      const bordo = vistaPass && st.stato === "incerto" ? COL.arancio : d.colore;
+      return { color: bordo, weight: 2, fillColor: d.colore, fillOpacity: (st.stato === "non_attiva" && !vistaPass) ? 0.15 : 0.4,
+               dashArray: (vistaPass ? (d.tratteggio || st.stato === "incerto") : st.stato === "incerto") ? "6 4" : null };
+    },
+    onEachFeature: (f, layer) => {
+      const s = f.properties.tipologia;
+      const st = statoSettore(s, p);
+      const d = descrizioneStato(s, st);
+      const dp = esitoProfilo(s, st, p);
+      layer.bindPopup(
+        "<b>" + esc(TESTI.settori[s] || ("Settore " + s)) + "</b><br>" +
+        esc(d.testo) + "<br><i>" + esc(dp.testo) + "</i><br>" +
+        '<span class="muted">Atti: ' + esc(f.properties.atto_iniz || "") + "</span>"
+      );
+    }
+  }).addTo(map);
+  if (layerVarchi) layerVarchi.bringToFront && layerVarchi.eachLayer(l => l.bringToFront && l.bringToFront());
+}
+
+function disegnaVarchi() {
+  if (layerVarchi) { map.removeLayer(layerVarchi); layerVarchi = null; }
+  if (!document.getElementById("mostraVarchi").checked) return;
+  layerVarchi = L.geoJSON(GEO.varchi, {
+    pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 6, color: "#9d174d", weight: 1.5, fillColor: COL.rosa, fillOpacity: 0.95 }),
+    onEachFeature: (f, layer) => {
+      const q = f.properties;
+      layer.bindPopup(
+        "<b>Varco Scudo Verde " + esc(q.num_varco || "") + "</b><br>" + esc(q.nome_varco || "") +
+        "<br>" + esc(q.ubicazione || "") +
+        '<br><span class="muted">Senso: ' + esc(q.tipo_varco || "?") + " | data inizio nel dataset: " + esc(q.data_ini || "?") + "</span>"
+      );
+    }
+  }).addTo(map);
+}
+
+function disegnaPerimetroSV() {
+  if (layerPerimetroSV) { map.removeLayer(layerPerimetroSV); layerPerimetroSV = null; }
+  if (!document.getElementById("mostraPerimetroSV").checked || !GEO.perimetroSV) return;
+  layerPerimetroSV = L.geoJSON(GEO.perimetroSV, {
+    interactive: false,
+    style: { color: COL.rosa, weight: 3, dashArray: "10 6", fillColor: COL.rosa, fillOpacity: 0.06 }
+  }).addTo(map);
+  layerPerimetroSV.bringToBack();
+}
+
+function disegnaPorte() {
+  if (layerPorte) { map.removeLayer(layerPorte); layerPorte = null; }
+  if (!document.getElementById("mostraPorte").checked) return;
+  const filtrate = GEO.porte.features.filter(f => /\(.*Settore\s+[A-Z].*\)/i.test(f.properties.titolo || ""));
+  layerPorte = L.geoJSON({ type: "FeatureCollection", features: filtrate }, {
+    pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 5, color: "#4a148c", weight: 1, fillColor: "#ab47bc", fillOpacity: 0.9 }),
+    onEachFeature: (f, layer) => layer.bindPopup("<b>" + esc(f.properties.titolo || "") + "</b><br>Porta telematica " + esc(f.properties["numero ptm"] || ""))
+  }).addTo(map);
+}
+
+/* ---------- pannello ---------- */
+function aggiornaPannello() {
+  const p = leggiInput();
+  const vistaPass = document.getElementById("vistaPass").checked;
+  const el = document.getElementById("elencoSettori");
+  el.innerHTML = "";
+  let c = 0, ceFestivoDubbio = false;
+  ["A", "B", "O", "F", "G"].forEach(s => {
+    const st = statoSettore(s, p);
+    if (st.stato === "incerto") ceFestivoDubbio = true;
+    const d = vistaPass ? esitoProfilo(s, st, p) : descrizioneStato(s, st);
+    const riga = document.createElement("div");
+    riga.className = "riga";
+    riga.innerHTML = '<span class="pallino" style="background:' + d.colore + '"></span><b>' + s + '</b><span class="t">' + esc(d.testo) + "</span>";
+    el.appendChild(riga);
+    c++;
+  });
+  document.getElementById("qdSintesi").textContent = pad(p.d) + "/" + pad(p.m) + "/" + p.y + " " + pad(p.h) + ":" + pad(p.min) + (ultimoRisultatoDove ? " · " + ultimoRisultatoDove.nome.split(",")[0] : "");
+  document.getElementById("notaFestivo").textContent = ceFestivoDubbio ? TESTI.orari.festivi_incerto : "";
+
+  // stagione
+  const s = stagione(p.y);
+  const fmt = k => pad(k % 100) + "/" + pad(Math.floor(k / 100) % 100) + "/" + Math.floor(k / 10000);
+  const inStag = nottiInStagione({ y: p.y, m: p.m, d: p.d });
+  document.getElementById("infoStagione").textContent =
+    "ZTL notturna estiva " + p.y + ": dal " + fmt(s.inizio) + " al " + fmt(s.fine) + " (date calcolate dalla regola del disciplinare). " +
+    (inStag ? "La data scelta e' dentro il periodo." : "La data scelta e' fuori dal periodo: niente ZTL notturna.");
+
+  // legenda fissa (sempre visibile sulla mappa)
+  const pt = (c, extra) => '<span class="pallino" style="background:' + c + (extra || "") + '"></span> ';
+  const voci = vistaPass ? [
+    [COL.verde, "Puoi"], [COL.verdeChiaro, "ZTL non attiva"], [COL.rosso, "Non puoi"], [COL.arancio, "Dubbio / pass non calcolato"]
+  ] : [
+    [COL.rosso, "ZTL attiva"], [COL.arancio, "Probabile (festivo)"], [COL.grigio, "ZTL non attiva"]
+  ];
+  document.getElementById("legendaFissa").innerHTML =
+    voci.map(v => '<span class="voce">' + pt(v[0]) + esc(v[1]) + "</span>").join("") +
+    '<span class="voce">' + pt(COL.rosa) + "Varco Scudo Verde</span>" +
+    '<span class="voce"><span style="display:inline-block;vertical-align:middle;width:16px;border-top:3px dashed ' + COL.rosa + '"></span> Perimetro Scudo Verde (stima)</span>';
+
+  aggiornaChip(p);
+}
+
+function aggiornaChip(p) {
+  const chip = document.getElementById("chip");
+  const sv = valutaScudoVerde();
+  if (sv.vietato) { chip.className = "no"; chip.textContent = "Il tuo veicolo e' vietato dallo Scudo Verde"; return; }
+  let ok = 0, no = 0, dub = 0;
+  ["A", "B", "O", "F", "G"].forEach(s => {
+    const e = esitoProfilo(s, statoSettore(s, p), p).esito;
+    if (e === "no") no++; else if (e === "nm") dub++; else ok++;
+  });
+  if (!no && !dub) { chip.className = "ok"; chip.textContent = "Alla data scelta puoi circolare in tutti i settori"; }
+  else if (!ok && !dub) { chip.className = "no"; chip.textContent = "Alla data scelta non puoi circolare in nessun settore ZTL"; }
+  else if (dub && !no) { chip.className = "dub"; chip.textContent = "Pass non calcolato: controlla i cartelli"; }
+  else { chip.className = "dub"; chip.textContent = "Puoi circolare in " + ok + " settori su 5 (vedi pannello Mappa)"; }
+}
+
+function riempiTesti() {
+  const T = TESTI;
+  document.getElementById("titolo").textContent = T.generale.titolo_sito;
+  document.getElementById("sottotitolo").textContent = T.generale.sottotitolo;
+  document.getElementById("avviso").textContent = T.generale.avviso_principale + " " + T.generale.avviso_orari_calcolati + " " + T.generale.avviso_permesso_non_verificato + " " + T.generale.bozza;
+  document.getElementById("fonteDati").textContent = T.generale.fonte_dati + " " + T.generale.avviso_privacy;
+
+  const o = T.orari;
+  const nm = RULES.pass_catalogo.non_modellati;
+  document.getElementById("cardOrari").innerHTML =
+    "<h2>" + esc(o.titolo) + "</h2><p>" + esc(o.diurna) + "</p><p>" + esc(o.notturna_estiva_intro) + "</p><ul class='compatta'><li>" +
+    esc(o.notturna_abo) + "</li><li>" + esc(o.notturna_fg) + "</li></ul><p>" + esc(o.mezzanotte) + "</p><p>" + esc(o.domenica) + "</p>";
+
+  const sv = T.scudo_verde;
+  document.getElementById("cardScudo").innerHTML =
+    "<h2>" + esc(sv.titolo) + "</h2><p>" + esc(sv.intro) + "</p><ul class='compatta'><li>" + esc(sv.vietati_auto) + "</li><li>" + esc(sv.vietati_moto) +
+    "</li><li>" + esc(sv.vietati_altri) + "</li></ul><p><b>" + esc(sv.esenzioni_titolo) + ":</b> " + esc(sv.esenzioni_senza_registrazione) +
+    "</p><p>" + esc(sv.esenzioni_con_registrazione) + "</p><p class='muted'>" + esc(sv.mappa_varchi) + " " + esc(sv.perimetro_stima) + " " + esc(sv.data_varchi) + "</p>";
+
+}
+
+/* ---------- profilo veicolo e pass ---------- */
+function costruisciProfilo() {
+  const T = TESTI.profilo, pv = RULES.scudo_verde.profilo_veicolo;
+  document.getElementById("pfTitolo").textContent = T.titolo;
+  document.getElementById("pfIntro").textContent = T.intro;
+  document.getElementById("pfLCat").textContent = T.categoria + " ";
+  document.getElementById("pfLAli").textContent = T.alimentazione + " ";
+  document.getElementById("pfLEuro").textContent = T.euro + " ";
+  document.getElementById("pfComeTrovare").textContent = T.come_trovare;
+  document.getElementById("pfLEsenzioni").textContent = T.esenzioni;
+  document.getElementById("pfLPass").textContent = T.pass + " ";
+  document.getElementById("pfLSettore").textContent = T.settore_pass + " ";
+  document.getElementById("pfSalva").textContent = T.salva_nota;
+
+  const cat = document.getElementById("pfCat");
+  cat.innerHTML = pv.categorie.map(c => '<option value="' + c.id + '">' + esc(c.nome) + "</option>").join("");
+  document.getElementById("pfEsenzioni").innerHTML = pv.esenzioni_con_registrazione.map(e =>
+    '<label><input type="checkbox" class="pfEs" value="' + e.id + '"> ' + esc(e.nome) + "</label>").join("");
+
+  const gruppi = {};
+  RULES.pass_catalogo.voci.forEach(v => { (gruppi[v.gruppo] = gruppi[v.gruppo] || []).push(v); });
+  document.getElementById("pfPass").innerHTML = Object.keys(gruppi).map(g =>
+    '<optgroup label="' + esc(g) + '">' + gruppi[g].map(v => '<option value="' + v.id + '">' + esc(v.nome) + "</option>").join("") + "</optgroup>").join("");
+
+  // valori salvati
+  cat.value = PROFILO.cat;
+  aggiornaAlimentazioni();
+  document.getElementById("pfAli").value = PROFILO.ali;
+  document.getElementById("pfEuro").value = String(PROFILO.euro);
+  document.querySelectorAll(".pfEs").forEach(c => { c.checked = PROFILO.esenzioni.includes(c.value); });
+  document.getElementById("pfPass").value = PROFILO.pass;
+  document.getElementById("pfSettore").value = PROFILO.settore;
+  aggiornaVisibilitaProfilo();
+}
+
+function aggiornaAlimentazioni() {
+  const pv = RULES.scudo_verde.profilo_veicolo;
+  const cat = catVeicolo(document.getElementById("pfCat").value);
+  const sel = document.getElementById("pfAli");
+  const corrente = sel.value;
+  sel.innerHTML = cat.alimentazioni.map(a => '<option value="' + a + '">' + esc(pv.alimentazioni[a].nome) + "</option>").join("");
+  if (cat.alimentazioni.includes(corrente)) sel.value = corrente;
+}
+function aggiornaVisibilitaProfilo() {
+  const ali = document.getElementById("pfAli").value;
+  document.getElementById("pfEuroWrap").style.display = (ali === "elettrica") ? "none" : "block";
+  const v = voceCatalogo(document.getElementById("pfPass").value);
+  document.getElementById("pfSettoreWrap").style.display = (v && v.ambito === "un_settore") ? "block" : "none";
+}
+function leggiProfiloDalForm() {
+  PROFILO.cat = document.getElementById("pfCat").value;
+  PROFILO.ali = document.getElementById("pfAli").value;
+  PROFILO.euro = Number(document.getElementById("pfEuro").value);
+  PROFILO.esenzioni = Array.from(document.querySelectorAll(".pfEs")).filter(c => c.checked).map(c => c.value);
+  PROFILO.pass = document.getElementById("pfPass").value;
+  PROFILO.settore = document.getElementById("pfSettore").value;
+  salvaProfilo();
+}
+function riepilogoProfilo() {
+  const T = TESTI.profilo;
+  const sv = valutaScudoVerde();
+  const v = voceCatalogo(PROFILO.pass);
+  let t = "<p><b>Scudo Verde.</b> ";
+  if (sv.vietato) t += esc(T.scudo_vietato);
+  else if (sv.esente) t += esc(T.scudo_esente);
+  else t += esc(T.scudo_ok);
+  if (sv.motivo && !sv.esente) t += " <span class='muted'>(" + esc(sv.motivo) + ")</span>";
+  t += "</p>";
+  if (sv.vietatoSenzaEsenzione) t += "<p class='muted'>" + esc(T.scudo_existing) + "</p>";
+  t += "<p><b>Pass.</b> " + esc(v.nota) + " <span class='muted'>(Fonte: " + esc(v.fonte) + ")</span></p>";
+  if (v.ambito === "un_settore") t += "<p class='muted'>" + esc(T.pass_un_settore) + "</p>";
+  if (v.ambito === "non_modellato") t += "<p class='muted'>" + esc(T.pass_non_modellato) + "</p>";
+  if (v.orario_fino) t += "<p class='muted'>" + esc(T.pass_limite_orario) + "</p>";
+  document.getElementById("pfRiepilogo").innerHTML = t;
+  const pvv = RULES.scudo_verde.profilo_veicolo;
+  document.getElementById("pfSintesi").textContent = catVeicolo(PROFILO.cat).nome + ", " + pvv.alimentazioni[PROFILO.ali].nome +
+    (PROFILO.ali === "elettrica" ? "" : ", Euro " + PROFILO.euro) + " · " + v.nome;
+}
+
+/* ---------- "dove": ricerca indirizzo ---------- */
+let markerIndirizzo = null;
+function puntoInAnello(x, y, anello) {
+  let dentro = false;
+  for (let i = 0, j = anello.length - 1; i < anello.length; j = i++) {
+    const xi = anello[i][0], yi = anello[i][1], xj = anello[j][0], yj = anello[j][1];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) dentro = !dentro;
+  }
+  return dentro;
+}
+function puntoInGeometria(x, y, g) {
+  const poligoni = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+  return poligoni.some(rings => puntoInAnello(x, y, rings[0]) && !rings.slice(1).some(h => puntoInAnello(x, y, h)));
+}
+function settoriDelPunto(lng, lat) {
+  const trovati = new Set();
+  ["diurna", "notturna"].forEach(k => GEO[k].features.forEach(f => {
+    if (puntoInGeometria(lng, lat, f.geometry)) trovati.add(f.properties.tipologia);
+  }));
+  return Array.from(trovati);
+}
+function distanzaMetri(lat1, lng1, lat2, lng2) {
+  const R = 6371000, r = Math.PI / 180;
+  const dl = (lat2 - lat1) * r, dg = (lng2 - lng1) * r;
+  const a = Math.sin(dl / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dg / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+function varcoPiuVicino(lat, lng) {
+  let best = Infinity;
+  GEO.varchi.features.forEach(f => { const c = f.geometry.coordinates; best = Math.min(best, distanzaMetri(lat, lng, c[1], c[0])); });
+  return best;
+}
+
+let ultimoRisultatoDove = null;
+function mostraRisultatoDove() {
+  const box = document.getElementById("dvRisultato");
+  const r = ultimoRisultatoDove;
+  if (!r) { box.innerHTML = ""; return; }
+  const T = TESTI.dove, p = leggiInput();
+  let html = "<p><b>" + esc(r.nome) + "</b></p>";
+  const sett = r.settori;
+  const sv = valutaScudoVerde();
+  let classe = "v-si", verdetto = "";
+  if (!sett.length) {
+    html += "<p>" + esc(T.fuori_ztl) + "</p>";
+    html += "<p class='muted'>" + esc(T.scudo_incerto) + " " + esc(r.inSV ? T.scudo_stima_dentro : T.scudo_stima_fuori) + " " + Math.round(r.distVarco) + " m.</p>";
+    if (sv.vietato) { classe = "v-no"; verdetto = TESTI.profilo.scudo_vietato + " (se l'indirizzo e' dentro lo Scudo Verde)"; }
+    else { verdetto = "Fuori dalle ZTL: nessuna limitazione ZTL. " + (sv.esente ? TESTI.profilo.scudo_esente : TESTI.profilo.scudo_ok); }
+  } else {
+    // se ricade in piu' settori (sovrapposizione) vale il piu' restrittivo, mostro quello con esito peggiore
+    const ordine = { no: 0, nm: 1, transito: 2, si: 3, libero: 4 };
+    let peggiore = null;
+    sett.forEach(s => {
+      const st = statoSettore(s, p);
+      const e = esitoProfilo(s, st, p);
+      html += "<p>" + esc(T.dentro) + " <b>" + esc(s) + "</b>: " + esc(descrizioneStato(s, st).testo) + ". " + esc(e.testo) + ".</p>";
+      if (!peggiore || ordine[e.esito] < ordine[peggiore.e.esito]) peggiore = { e, st };
+    });
+    html += "<p class='muted'>" + esc(T.scudo_dentro_ztl) + "</p>";
+    const es = peggiore.e.esito, dub = peggiore.st.stato === "incerto" ? T.verdetto_incerto : "";
+    if (es === "no") { classe = "v-no"; verdetto = T.verdetto_no; }
+    else if (es === "nm") { classe = "v-inc"; verdetto = TESTI.profilo.pass_non_modellato; }
+    else if (es === "transito") { classe = "v-inc"; verdetto = dub + T.verdetto_transito; }
+    else if (es === "libero") { verdetto = T.verdetto_si_libero; }
+    else { verdetto = dub + T.verdetto_si; }
+    if (peggiore.st.stato === "incerto" && es !== "no") classe = "v-inc";
+  }
+  html += '<div class="verdetto ' + classe + '">' + esc(verdetto) + "</div><p class='muted'>" + esc(T.precisione) + "</p>";
+  box.innerHTML = html;
+}
+
+async function cercaIndirizzo(ev) {
+  ev.preventDefault();
+  const q = document.getElementById("dvInput").value.trim();
+  const box = document.getElementById("dvRisultato");
+  if (!q) return;
+  const T = TESTI.dove;
+  box.textContent = "...";
+  document.getElementById("dvBtn").disabled = true;
+  try {
+    const query = /firenze/i.test(q) ? q : q + ", Firenze";
+    const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=it&accept-language=it&viewbox=10.95,43.90,11.45,43.62&bounded=1&q=" + encodeURIComponent(query);
+    const r = await fetch(url, { headers: { "Accept": "application/json" } });
+    if (!r.ok) throw new Error(r.status);
+    const arr = await r.json();
+    if (!arr.length) { ultimoRisultatoDove = null; box.textContent = T.non_trovato; return; }
+    const lat = parseFloat(arr[0].lat), lng = parseFloat(arr[0].lon);
+    ultimoRisultatoDove = { nome: arr[0].display_name, lat, lng, settori: settoriDelPunto(lng, lat), inSV: !!(GEO.perimetroSV && GEO.perimetroSV.features.some(f => puntoInGeometria(lng, lat, f.geometry))), distVarco: varcoPiuVicino(lat, lng) };
+    if (markerIndirizzo) map.removeLayer(markerIndirizzo);
+    markerIndirizzo = L.marker([lat, lng]).addTo(map).bindPopup(esc(arr[0].display_name)).openPopup();
+    map.setView([lat, lng], 16);
+    mostraRisultatoDove();
+  } catch (e) {
+    ultimoRisultatoDove = null; box.textContent = T.errore;
+  } finally {
+    document.getElementById("dvBtn").disabled = false;
+  }
+}
+
+function sceltaPerimetroAutomatica() {
+  // se in questo momento una ZTL notturna e' attiva in F o G, o regime notturno in A/B/O, mostra il perimetro notturno
+  const p = leggiInput();
+  const notturna = ["A", "B", "O", "F", "G"].some(s => statoSettore(s, p).regime === "notturna");
+  document.getElementById("perimetro").value = notturna ? "notturna" : "diurna";
+}
+
+function aggiornaTutto() {
+  disegnaPoligoni();
+  aggiornaPannello();
+  riepilogoProfilo();
+  mostraRisultatoDove();
+}
+
+/* ---------- pannelli laterali ---------- */
+function impostaPannelli() {
+  const cl = document.body.classList;
+  if (window.innerWidth > 800) cl.add("sx-open");
+  const t = document.getElementById("tabSx");
+  const agg = () => { t.textContent = cl.contains("sx-open") ? "Chiudi menu" : "Menu"; };
+  t.addEventListener("click", () => { cl.toggle("sx-open"); agg(); });
+  agg();
+  // le tre tendine: se ne apre una alla volta
+  document.querySelectorAll("details.tend").forEach(d => d.addEventListener("toggle", () => {
+    if (d.open) document.querySelectorAll("details.tend").forEach(o => { if (o !== d) o.open = false; });
+  }));
+  document.getElementById("btnInfo").addEventListener("click", () => {
+    const a = document.getElementById("avviso"); a.hidden = !a.hidden;
+  });
+}
+
+/* ---------- avvio ---------- */
+async function carica(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + " (" + r.status + ")");
+  return r.json();
+}
+
+async function avvia() {
+  try {
+    const [rules, testi, diurna, notturna, varchi, porte, perimetroSV] = await Promise.all([
+      carica("data/rules.json"), carica("data/testi_it.json"),
+      carica("data/ztl_diurna.geojson"), carica("data/ztl_notturna.geojson"),
+      carica("data/varchi_scudo_verde.geojson"), carica("data/porte_telematiche.geojson"),
+      carica("data/perimetro_scudo_verde_stima.geojson").catch(() => null)
+    ]);
+    RULES = rules; TESTI = testi;
+    GEO = { diurna, notturna, varchi, porte, perimetroSV };
+  } catch (e) {
+    const er = document.getElementById("errore");
+    er.style.display = "block";
+    er.textContent = "Non riesco a leggere i file in data\\ (" + e.message + "). Apri la pagina con Live Server in VS Code (non con doppio clic sul file).";
+    return;
+  }
+  riempiTesti();
+  impostaPannelli();
+  caricaProfilo();
+  costruisciProfilo();
+  document.getElementById("dvTitolo").textContent = TESTI.dove.titolo;
+  document.getElementById("dvInput").placeholder = TESTI.dove.placeholder;
+  document.getElementById("dvBtn").textContent = TESTI.dove.cerca;
+  document.getElementById("dvNota").textContent = TESTI.dove.invio_nota;
+  costruisciMappa();
+  scriviInput(oraDiFirenze());
+  sceltaPerimetroAutomatica();
+  disegnaPerimetroSV();
+  disegnaVarchi();
+  aggiornaTutto();
+
+  document.getElementById("quando").addEventListener("change", () => { sceltaPerimetroAutomatica(); aggiornaTutto(); });
+  document.getElementById("adesso").addEventListener("click", () => { scriviInput(oraDiFirenze()); sceltaPerimetroAutomatica(); aggiornaTutto(); });
+  document.getElementById("perimetro").addEventListener("change", aggiornaTutto);
+  document.getElementById("pfCat").addEventListener("change", () => { aggiornaAlimentazioni(); aggiornaVisibilitaProfilo(); leggiProfiloDalForm(); aggiornaTutto(); });
+  ["pfAli", "pfEuro", "pfPass", "pfSettore"].forEach(id => document.getElementById(id).addEventListener("change", () => { aggiornaVisibilitaProfilo(); leggiProfiloDalForm(); aggiornaTutto(); }));
+  document.getElementById("pfEsenzioni").addEventListener("change", () => { leggiProfiloDalForm(); aggiornaTutto(); });
+  document.getElementById("dvForm").addEventListener("submit", cercaIndirizzo);
+  document.getElementById("vistaPass").addEventListener("change", aggiornaTutto);
+  document.getElementById("mostraVarchi").addEventListener("change", disegnaVarchi);
+  document.getElementById("mostraPerimetroSV").addEventListener("change", disegnaPerimetroSV);
+  document.getElementById("mostraPorte").addEventListener("change", disegnaPorte);
+}
+avvia();
+</script>
+</body>
+</html>
