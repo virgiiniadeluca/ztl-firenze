@@ -1,0 +1,1287 @@
+{
+  "versione": "0.1-bozza",
+  "creato_il": "2026-11-13",
+  "stato": "BOZZA: da verificare con il Comune prima della pubblicazione. Il sito del Comune non era raggiungibile da questa sessione: tutte le regole vengono SOLO dai PDF ufficiali in ZTL\\REGOLE.",
+  "nota_priorita_fonti": "Quando una fonte contrasta con il disciplinare, vale il disciplinare. riassunto_progetto_ztl.md e' stato ignorato dove in contrasto (vedi 'differenze_dal_riassunto').",
+  "fonti": {
+    "DISC": {
+      "titolo": "Disciplinare tecnico della Zona a Traffico Limitato (ZTL) - Provvedimento Dirigenziale 2011/M/04192 del 25/05/2011, con integrazioni successive (ultime citate: ordinanze 2019/M/04122 e 2020/M/00460)",
+      "file": "ZTL\\REGOLE\\Disciplinare_ZTL.pdf (testo: REGOLE\\testo\\disciplinare_completo.txt)"
+    },
+    "SV": {
+      "titolo": "Provvedimento Dirigenziale 1190/2025 del 27/02/2025 (Scudo Verde, errata corrige degli allegati B e C del Provv. 8397/2024), con Disciplinare tecnico ZSV (Allegato C) e tabella divieti (Allegato B)",
+      "file": "ZTL\\REGOLE\\Scudo_Verde.pdf (testo: REGOLE\\testo\\scudo_verde_completo.txt)"
+    }
+  },
+  "settori": {
+    "A": {
+      "nome": "Settore A (centro storico)",
+      "ztl_diurna": true,
+      "ztl_notturna_estiva": true,
+      "gruppo_orari_notturni": "ABO",
+      "fonte": [
+        "DISC, ordinanza punto 1 (Settore A) e Titolo I punto 2"
+      ]
+    },
+    "B": {
+      "nome": "Settore B (zona intorno al centro, a nord dell'Arno)",
+      "ztl_diurna": true,
+      "ztl_notturna_estiva": true,
+      "gruppo_orari_notturni": "ABO",
+      "nota_perimetro": "Il settore B comprende tutte le strade entro il perimetro indicato, tranne quelle gia' nel settore A.",
+      "fonte": [
+        "DISC, ordinanza punto 1 (Settore B)"
+      ]
+    },
+    "O": {
+      "nome": "Settore O (Oltrarno)",
+      "ztl_diurna": true,
+      "ztl_notturna_estiva": true,
+      "gruppo_orari_notturni": "ABO",
+      "fonte": [
+        "DISC, ordinanza punto 1 (Settore O); istituito con ord. 2015/M/02083"
+      ]
+    },
+    "F": {
+      "nome": "Settore F (Oltrarno est / Lungarni Serristori-Cellini)",
+      "ztl_diurna": false,
+      "ztl_notturna_estiva": true,
+      "gruppo_orari_notturni": "FG",
+      "fonte": [
+        "DISC, ordinanza punto 1 (Settore F) e punto 2; Titolo I punto 3"
+      ]
+    },
+    "G": {
+      "nome": "Settore G (piazza Cavalleggeri, lungarno Zecca Vecchia, piazza Piave)",
+      "ztl_diurna": false,
+      "ztl_notturna_estiva": true,
+      "gruppo_orari_notturni": "FG",
+      "fonte": [
+        "DISC, ordinanza punto 1 (Settore G) e punto 2; Titolo I punto 3"
+      ]
+    }
+  },
+  "orari": {
+    "giorni_numerati": "ISO: 1=lunedi', 2=martedi', 3=mercoledi', 4=giovedi', 5=venerdi', 6=sabato, 7=domenica",
+    "ztl_diurna": {
+      "settori": [
+        "A",
+        "B",
+        "O"
+      ],
+      "valida_tutto_l_anno": true,
+      "fasce": [
+        {
+          "giorni": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "dalle": "07:30",
+          "alle": "20:00"
+        },
+        {
+          "giorni": [
+            6
+          ],
+          "dalle": "07:30",
+          "alle": "16:00"
+        }
+      ],
+      "divieto": "Nelle fasce indicate sono vietati transito e sosta dei veicoli non autorizzati.",
+      "fonte": [
+        "DISC, ordinanza punto 2 (secondo capoverso); Titolo I punto 3 (primo capoverso)"
+      ],
+      "certezza": "alta"
+    },
+    "ztl_notturna_estiva": {
+      "stagione": {
+        "inizio": "primo giovedi' di aprile",
+        "fine": "prima domenica di ottobre",
+        "esempi": {
+          "2026": {
+            "inizio": "2026-04-02",
+            "fine": "2026-10-04"
+          },
+          "2027": {
+            "inizio": "2027-04-01",
+            "fine": "2027-10-03"
+          },
+          "2028": {
+            "inizio": "2028-04-06",
+            "fine": "2028-10-01"
+          }
+        },
+        "nota_esempi": "Date calcolate da me applicando la regola del disciplinare; il Comune non pubblica una tabella nei testi che ho letto.",
+        "fonte": [
+          "DISC, ordinanza punto 2 (terzo capoverso, 'dal 20 giugno 2019'); Titolo I punto 3"
+        ],
+        "certezza": "alta sulla regola; media sugli estremi (vedi incertezze: stagione_estremi)"
+      },
+      "finestre": {
+        "ABO": {
+          "settori": [
+            "A",
+            "B",
+            "O"
+          ],
+          "elenco": [
+            {
+              "da_giorno": 4,
+              "da_ora": "23:00",
+              "a_giorno": 5,
+              "a_ora": "03:00"
+            },
+            {
+              "da_giorno": 5,
+              "da_ora": "20:00",
+              "a_giorno": 6,
+              "a_ora": "03:00"
+            },
+            {
+              "da_giorno": 6,
+              "da_ora": "16:00",
+              "a_giorno": 7,
+              "a_ora": "03:00"
+            }
+          ]
+        },
+        "FG": {
+          "settori": [
+            "F",
+            "G"
+          ],
+          "elenco": [
+            {
+              "da_giorno": 4,
+              "da_ora": "23:00",
+              "a_giorno": 5,
+              "a_ora": "03:00"
+            },
+            {
+              "da_giorno": 5,
+              "da_ora": "23:00",
+              "a_giorno": 6,
+              "a_ora": "03:00"
+            },
+            {
+              "da_giorno": 6,
+              "da_ora": "23:00",
+              "a_giorno": 7,
+              "a_ora": "03:00"
+            }
+          ]
+        }
+      },
+      "nota_finestre": "Le finestre attraversano la mezzanotte: per esempio la notte tra sabato e domenica la ZTL e' attiva fino alle 03:00 di DOMENICA.",
+      "divieto": "Stessa disciplina della ZTL diurna: vietati transito e sosta dei non autorizzati.",
+      "fonte": [
+        "DISC, ordinanza punto 2 (tabella per settori A/B/O e F/G); Titolo I punto 3"
+      ],
+      "certezza": "alta"
+    },
+    "settori_senza_fascia_diurna": {
+      "settori": [
+        "F",
+        "G"
+      ],
+      "motivo": "Il disciplinare assegna a F e G solo le finestre notturne estive; per F e G non c'e' nessuna fascia diurna.",
+      "fonte": [
+        "DISC, Titolo I punto 3 (la ZTL diurna e' definita 'nei settori A, B ed O')"
+      ],
+      "certezza": "alta"
+    },
+    "domenica": {
+      "stato": "ZTL non attiva di giorno (il disciplinare indica solo lunedi'-sabato per la fascia diurna), ma attiva dalle 00:00 alle 03:00 se e' la coda della notte di sabato in stagione estiva.",
+      "fonte": [
+        "DISC, Titolo I punto 3"
+      ],
+      "certezza": "media: il testo non cita mai esplicitamente la domenica come 'non attiva'; si deduce dall'elenco dei giorni"
+    },
+    "festivi_infrasettimanali": {
+      "stato": "INCERTO",
+      "descrizione": "Il disciplinare dice 'nei giorni feriali dal lunedi' al venerdi''. Non dice se un festivo che cade di lunedi'-venerdi' (es. 25 aprile, 1 maggio, 2 giugno, 15 agosto, Natale) sia comunque 'ZTL attiva'. Nel testo la parola 'festivi' compare solo per la sosta riservata ai residenti (punto 6.1: validita' 24 ore su 24, feriali e festivi).",
+      "comportamento_suggerito_per_il_sito": "Nel dubbio mostrare 'ZTL probabilmente attiva: verifica i cartelli ai varchi' (scelta prudente). Da decidere con l'utente.",
+      "fonte": [
+        "DISC, ordinanza punto 2; Titolo I punto 3; Titolo I punto 6.1"
+      ],
+      "certezza": "bassa",
+      "festivi_considerati_dal_sito": "1/1, 6/1, 25/4, 1/5, 2/6, 15/8, 1/11, 8/12, 25/12, 26/12 e Lunedi' dell'Angelo (festivi nazionali italiani, calcolati nel codice). Non incluso il patrono San Giovanni (24/6): il disciplinare non lo cita."
+    },
+    "sosta_residenti_24h": {
+      "descrizione": "I divieti di sosta con rimozione forzata nei posti riservati ai residenti valgono dalle 00:00 alle 24:00 di tutti i giorni, feriali e festivi, salvo diversa regola di categoria. Negli orari in cui la ZTL non e' attiva, nei parcheggi riservati ai residenti possono sostare anche altri veicoli di residenti senza contrassegno, esponendo la fotocopia della carta di circolazione.",
+      "fonte": [
+        "DISC, Titolo I punti 6.1 e 6.2"
+      ],
+      "certezza": "alta"
+    }
+  },
+  "itinerari_non_autorizzati": {
+    "descrizione": "Anche senza autorizzazione si puo' transitare (non sostare) lungo alcuni itinerari interni alla ZTL. Gli itinerari j) (via dell'Agnolo-S.Verdiana-piazza Ghiberti-via della Mattonaia) NON valgono durante la ZTL notturna estiva. Elenco completo con le condizioni nel disciplinare (alcuni itinerari valgono solo per chi e' diretto a stazione, parcheggi, mercati).",
+    "fonte": [
+      "DISC, Titolo I punto 4 (itinerari b, d, e, f, g, h, i, j, k, m, n; a, c, l abrogati)"
+    ],
+    "certezza": "alta sull'esistenza; l'elenco strada per strada va codificato solo se serve al calcolo del percorso (fase finale)"
+  },
+  "pass": {
+    "B_residenti": {
+      "titolo": "Contrassegno residenti, settore B",
+      "categoria": "Scheda 1.1 - Residenti, domiciliati e accasermati",
+      "fonte": [
+        "DISC, Allegato A, Scheda 1.1 (pag. 24-25), campo 'Tipologia di autorizzazioni'",
+        "DISC, Titolo I punto 5"
+      ],
+      "accesso": {
+        "B": {
+          "transito": true,
+          "sosta": true,
+          "nota": "L'autorizzazione consente il transito e la sosta nel settore di appartenenza.",
+          "fonte": [
+            "DISC, Scheda 1.1"
+          ]
+        },
+        "F": {
+          "transito": true,
+          "sosta": false,
+          "nota": "I residenti dei settori B ed O sono autorizzati al transito anche nei settori F e G. Il testo parla solo di transito, non di sosta.",
+          "fonte": [
+            "DISC, Scheda 1.1",
+            "DISC, Titolo I punto 5 (secondo capoverso)"
+          ]
+        },
+        "G": {
+          "transito": true,
+          "sosta": false,
+          "nota": "Come per F.",
+          "fonte": [
+            "DISC, Scheda 1.1",
+            "DISC, Titolo I punto 5"
+          ]
+        },
+        "A": {
+          "transito": false,
+          "sosta": false,
+          "nota": "Il pass B non e' valido nel settore A (solo i residenti A girano ovunque). Il testo non prevede eccezioni, se non gli itinerari liberi del punto 4.",
+          "fonte": [
+            "DISC, Scheda 1.1",
+            "DISC, Titolo I punto 5 (primo capoverso)"
+          ]
+        },
+        "O": {
+          "transito": false,
+          "sosta": false,
+          "nota": "Il pass B non e' valido nel settore O. L'itinerario speciale del punto 5 (lungarno Vespucci - piazza Goldoni - lungarno Corsini) e' riservato a chi ha il pass O.",
+          "fonte": [
+            "DISC, Scheda 1.1",
+            "DISC, Titolo I punto 5 (terzo capoverso)"
+          ]
+        }
+      },
+      "orari_validita": "Il pass vale negli orari di ZTL: sia di giorno sia nelle notti estive (nel settore B come in F e G).",
+      "durante_ztl_notturna_estiva": {
+        "descrizione": "Le eventuali seconda e terza auto riportate sul permesso possono circolare contemporaneamente (targhe in lista bianca inserite dalla societa' affidataria). Ai controlli basta mostrare la carta di circolazione con la residenza nella zona.",
+        "fonte": [
+          "DISC, Scheda 1.1, 'Circolazione durante la ZTL NOTTURNA ESTIVA'"
+        ]
+      },
+      "sosta_notturna_fuori_orario_ztl": {
+        "descrizione": "Negli orari in cui la ZTL non e' attiva si puo' sostare negli spazi residenti con contrassegno 'zona sosta notturna' oppure esponendo copia del libretto di circolazione.",
+        "fonte": [
+          "DISC, Scheda 1.1; Titolo I punto 6.2"
+        ]
+      },
+      "sosta_nel_settore_B": {
+        "descrizione": "Nelle vie del settore B dove e' consentita la sosta ai residenti dei vecchi settori B, C e D, ora possono sostare i residenti del nuovo settore B.",
+        "fonte": [
+          "DISC, ordinanza punto 12"
+        ]
+      },
+      "requisiti_pratici": {
+        "veicolo": "Veicolo per il trasporto persone (categoria M1) intestato al residente, a un familiare, o assegnato in uso esclusivo da una societa' a un residente (anche leasing/noleggio a lungo termine).",
+        "numero_targhe": "Un'unica autorizzazione per famiglia anagrafica, fino a tre targhe sul contrassegno.",
+        "per_i_varchi_con_porte_telematiche": "Oltre al contrassegno esposto sul parabrezza serve l'iscrizione della targa in lista bianca (targa singola) o il telepass ZTL abbinato (targhe multiple).",
+        "durata": "Minimo 1 anno, a scelta fino a 5 anni.",
+        "fonte": [
+          "DISC, Scheda 1.1",
+          "DISC, Titolo II punti 8, 10.1, 10.3, 10.4"
+        ]
+      },
+      "limite_antinquinamento": {
+        "descrizione": "Non possono essere autorizzati all'accesso in ZTL i veicoli che non rispettano i parametri antinquinamento dell'ordinanza 2018/00301 e successive modifiche.",
+        "stato": "NON VERIFICATO: il testo di quell'ordinanza non e' tra i file. Un'auto ibrida Euro 6 e' quasi certamente a posto, ma non posso confermarlo dalle fonti che ho.",
+        "fonte": [
+          "DISC, Titolo IV punto 27; Titolo III punto 17 (ultimo capoverso)"
+        ],
+        "certezza": "bassa"
+      }
+    }
+  },
+  "scudo_verde": {
+    "nome": "ZTL Scudo Verde (ZSV) - Zona a Basse Emissioni",
+    "in_vigore_dal": "2025-04-01",
+    "orario": {
+      "giorni": "tutti i giorni dell'anno",
+      "dalle": "00:00",
+      "alle": "24:00"
+    },
+    "ambito": "Territorio comunale compreso nel perimetro approvato con delibera di Giunta DG/2023/00607 del 05/12/2023 (il perimetro e' nei dati geografici, non nel testo).",
+    "controlli": "Varchi telematici.",
+    "fonte": [
+      "SV, Provv. 1190/2025 punto 1 (decorrenza 01/04/2025); Allegato C punti 2, 3, 4"
+    ],
+    "veicoli_vietati": [
+      {
+        "categoria": "Ciclomotori (L1, L2)",
+        "alimentazione": "miscela olio/benzina 2 tempi",
+        "euro_vietate": [
+          0,
+          1
+        ]
+      },
+      {
+        "categoria": "Ciclomotori (L1, L2)",
+        "alimentazione": "benzina 4 tempi",
+        "euro_vietate": [
+          0
+        ]
+      },
+      {
+        "categoria": "Motocicli (L3)",
+        "alimentazione": "miscela olio/benzina 2 tempi",
+        "euro_vietate": [
+          0
+        ]
+      },
+      {
+        "categoria": "Autovetture (M1)",
+        "alimentazione": "benzina",
+        "euro_vietate": [
+          0
+        ]
+      },
+      {
+        "categoria": "Autovetture (M1)",
+        "alimentazione": "diesel",
+        "euro_vietate": [
+          0,
+          1
+        ]
+      },
+      {
+        "categoria": "Autobus e autosnodati (M2, M3)",
+        "alimentazione": "benzina",
+        "euro_vietate": [
+          0,
+          1
+        ]
+      },
+      {
+        "categoria": "Autobus e autosnodati (M2, M3)",
+        "alimentazione": "diesel",
+        "euro_vietate": [
+          0,
+          1
+        ]
+      },
+      {
+        "categoria": "Autoveicoli trasporto cose (N1)",
+        "alimentazione": "benzina",
+        "euro_vietate": [
+          0
+        ],
+        "nota": "Esclusi i veicoli per trasporti specifici (art. 54 c.1 lett. f CdS)"
+      },
+      {
+        "categoria": "Autoveicoli trasporto cose (N1)",
+        "alimentazione": "diesel",
+        "euro_vietate": [
+          0
+        ],
+        "nota": "Esclusi i veicoli per trasporti specifici (art. 54 c.1 lett. f CdS)"
+      },
+      {
+        "categoria": "Autoveicoli trasporto cose (N2, N3)",
+        "alimentazione": "benzina",
+        "euro_vietate": [
+          0
+        ],
+        "nota": "Esclusi i veicoli per trasporti specifici"
+      },
+      {
+        "categoria": "Autoveicoli trasporto cose (N2, N3)",
+        "alimentazione": "diesel",
+        "euro_vietate": [
+          0
+        ],
+        "nota": "Esclusi i veicoli per trasporti specifici"
+      },
+      {
+        "categoria": "Autoveicoli per uso speciale",
+        "alimentazione": "benzina",
+        "euro_vietate": [
+          0
+        ]
+      },
+      {
+        "categoria": "Autoveicoli per uso speciale",
+        "alimentazione": "diesel",
+        "euro_vietate": [
+          0
+        ]
+      }
+    ],
+    "fonte_tabella": [
+      "SV, Allegato C punto 4 (Tab. 4.1) e Allegato B 'Divieti vigenti'"
+    ],
+    "regola_generale_auto": "Per le autovetture (M1) e' vietata solo la benzina Euro 0 e il diesel Euro 0-1. Qualsiasi altra combinazione (es. benzina Euro 1 o superiore, diesel Euro 2 o superiore, ibrida Euro 6, elettrica) NON rientra nel divieto.",
+    "ibrido_e_elettrico": "Ibrido ed elettrico non sono una riga della tabella: contano la classe Euro e il carburante principale. Una ibrida Euro 6 non e' vietata.",
+    "esempio_ypsilon_ibrida_euro6": {
+      "colpita": false,
+      "motivo": "Euro 6 e' ben oltre le classi vietate (benzina Euro 0 / diesel Euro 0-1).",
+      "fonte": [
+        "SV, Allegato C punto 4"
+      ]
+    },
+    "origine_dei_divieti": "Ordinanze del Sindaco 1105/2006, 1209/2007, 1188/2008 (veicoli leggeri e moto) e 30/2011 (autobus Euro 0): vietano gia' da anni questi veicoli in tutto il centro abitato; lo Scudo Verde li rende controllabili con i varchi.",
+    "esenzioni_senza_registrazione_targa": [
+      "veicoli a braccia, a trazione animale",
+      "velocipedi e monopattini",
+      "veicoli di Forze Armate, Forze di Polizia, Polizia Locale, Croce Rossa, Vigili del Fuoco, protezione civile riconoscibili dalla targa speciale"
+    ],
+    "esenzioni_senza_registrazione_targa_fonte": [
+      "SV, Allegato C punto 5 (primo elenco)"
+    ],
+    "esenzioni_con_registrazione_targa_prima_dell_accesso": [
+      "veicoli di Forze Armate/Polizia/Polizia Locale/CRI/Ospedali/ASL/Vigili del Fuoco/Protezione Civile NON riconoscibili dalla targa speciale",
+      "autoambulanze e veicoli di primo soccorso o trasporto socio-sanitario di Pubbliche Assistenze e Misericordie",
+      "veicoli per trasporti specifici con attrezzature permanenti per disabili motori",
+      "veicoli con contrassegno disabili (CUDE) con il titolare a bordo",
+      "veicoli di associazioni di volontariato, cooperative sociali e enti convenzionati col Comune (assistenza socio-sanitaria)",
+      "operatori sociali convenzionati con ospedali/ASL nella ZSV e guardia medica",
+      "operatori riconosciuti dal Comune per la tutela degli animali",
+      "enti/aziende del trasporto pubblico di linea",
+      "enti/aziende di igiene ambientale e raccolta rifiuti",
+      "aziende che fanno interventi urgenti e manutenzione su gas, acqua, energia elettrica, telefonia",
+      "veicoli a metano, GPL o bifuel (benzina-metano, benzina-GPL)",
+      "veicoli storici/collezionistici con Certificato di Rilevanza Storica (art. 60 CdS)"
+    ],
+    "esenzioni_con_registrazione_fonte": [
+      "SV, Allegato C punto 5 (secondo elenco) e punto 6 (a-i); Allegato B 'Deroghe'"
+    ],
+    "autobus": "Gli autobus possono entrare rispettando la disciplina 'ZTL Autobus' (delibera DG/2023/00482 e s.m.i.).",
+    "autobus_fonte": [
+      "SV, Allegato C punto 7"
+    ],
+    "deroghe_eccezionali": "Altri soggetti possono chiedere una deroga motivata e con durata; al termine della deroga scatta la sanzione senza preavviso.",
+    "deroghe_fonte": [
+      "SV, Allegato C punto 8"
+    ],
+    "autorizzazioni_ztl_centro_storico_gia_rilasciate": "Restano valide fino alla scadenza naturale e valgono anche per lo Scudo Verde.",
+    "autorizzazioni_fonte": [
+      "SV, Allegato C punto 9"
+    ],
+    "divieto_nuove_autorizzazioni_ztl": "Non si possono rilasciare autorizzazioni per la ZTL Centro Storico a veicoli vietati dallo Scudo Verde, a meno che rientrino nelle deroghe.",
+    "divieto_nuove_autorizzazioni_fonte": [
+      "SV, Allegato C punto 10"
+    ],
+    "norme_piu_restrittive": "Dentro lo Scudo Verde restano in vigore le regole piu' restrittive di ZTL, aree pedonali e corsie riservate.",
+    "sanzione": "Accesso o transito in violazione: sanzione dell'art. 7 comma 14 del Codice della Strada.",
+    "sanzione_fonte": [
+      "SV, Allegato C punto 10 (ultimo capoverso)"
+    ],
+    "certezza": "alta sulla tabella e sulle esenzioni; vedi incertezze per la data dei varchi",
+    "profilo_veicolo": {
+      "categorie": [
+        {
+          "id": "auto",
+          "nome": "Automobile (M1)",
+          "tabella": "Autovetture (M1)",
+          "alimentazioni": [
+            "benzina",
+            "diesel",
+            "benzina_ibrida",
+            "diesel_ibrida",
+            "gpl_metano",
+            "elettrica"
+          ]
+        },
+        {
+          "id": "ciclomotore",
+          "nome": "Ciclomotore (L1, L2)",
+          "tabella": "Ciclomotori (L1, L2)",
+          "alimentazioni": [
+            "miscela_2t",
+            "benzina_4t",
+            "elettrica"
+          ]
+        },
+        {
+          "id": "moto",
+          "nome": "Motocicletta (L3)",
+          "tabella": "Motocicli (L3)",
+          "alimentazioni": [
+            "miscela_2t",
+            "benzina_4t",
+            "elettrica"
+          ]
+        },
+        {
+          "id": "furgone",
+          "nome": "Furgone o autocarro leggero (N1)",
+          "tabella": "Autoveicoli trasporto cose (N1)",
+          "alimentazioni": [
+            "benzina",
+            "diesel",
+            "gpl_metano",
+            "elettrica"
+          ]
+        },
+        {
+          "id": "camion",
+          "nome": "Autocarro pesante (N2, N3)",
+          "tabella": "Autoveicoli trasporto cose (N2, N3)",
+          "alimentazioni": [
+            "benzina",
+            "diesel",
+            "gpl_metano",
+            "elettrica"
+          ]
+        },
+        {
+          "id": "autobus",
+          "nome": "Autobus (M2, M3)",
+          "tabella": "Autobus e autosnodati (M2, M3)",
+          "alimentazioni": [
+            "benzina",
+            "diesel",
+            "gpl_metano",
+            "elettrica"
+          ]
+        },
+        {
+          "id": "speciale",
+          "nome": "Veicolo per uso speciale",
+          "tabella": "Autoveicoli per uso speciale",
+          "alimentazioni": [
+            "benzina",
+            "diesel",
+            "gpl_metano",
+            "elettrica"
+          ]
+        }
+      ],
+      "alimentazioni": {
+        "benzina": {
+          "nome": "Benzina",
+          "riga_tabella": "benzina"
+        },
+        "diesel": {
+          "nome": "Diesel",
+          "riga_tabella": "diesel"
+        },
+        "benzina_ibrida": {
+          "nome": "Ibrida a benzina",
+          "riga_tabella": "benzina",
+          "nota": "Il provvedimento non cita le ibride: applico la riga della benzina (carburante principale). Una ibrida Euro 1 o superiore non e' comunque vietata."
+        },
+        "diesel_ibrida": {
+          "nome": "Ibrida diesel",
+          "riga_tabella": "diesel",
+          "nota": "Il provvedimento non cita le ibride: applico la riga del diesel."
+        },
+        "gpl_metano": {
+          "nome": "Metano, GPL o bifuel",
+          "esente": true,
+          "nota": "Esente dal divieto, ma serve registrare la targa prima dell'accesso (Allegato C punto 6 lett. h)."
+        },
+        "miscela_2t": {
+          "nome": "Miscela olio/benzina 2 tempi",
+          "riga_tabella": "miscela olio/benzina 2 tempi"
+        },
+        "benzina_4t": {
+          "nome": "Benzina 4 tempi",
+          "riga_tabella": "benzina 4 tempi"
+        },
+        "elettrica": {
+          "nome": "Elettrica",
+          "non_in_tabella": true,
+          "nota": "Gli elettrici non sono nella tabella dei divieti."
+        }
+      },
+      "esenzioni_con_registrazione": [
+        {
+          "id": "cude",
+          "nome": "Ho il contrassegno disabili (CUDE) e il titolare e' a bordo"
+        },
+        {
+          "id": "storico",
+          "nome": "Veicolo storico con certificato di rilevanza storica (CRS)"
+        },
+        {
+          "id": "soccorso",
+          "nome": "Ambulanza o soccorso di Pubblica Assistenza / Misericordia"
+        },
+        {
+          "id": "volontariato",
+          "nome": "Volontariato o ente convenzionato col Comune (assistenza socio-sanitaria)"
+        },
+        {
+          "id": "servizio",
+          "nome": "Trasporto pubblico di linea, rifiuti o manutenzione di gas/acqua/luce/telefono"
+        },
+        {
+          "id": "altra",
+          "nome": "Altra esenzione elencata nel provvedimento (vedi testo)"
+        }
+      ],
+      "fonte": [
+        "SV, Allegato C punti 4, 5, 6; Allegato B"
+      ]
+    },
+    "perimetro": {
+      "disponibile": false,
+      "nota": "Nei dati scaricati ci sono solo i 77 varchi. La corografia del Comune (ZTL\\PLANIMETRIA\\All 1 - Corografia Generale Scudo Verde) mostra un perimetro blu irregolare che segue il centro abitato: non coincide con il confine comunale e non e' in formato digitale. Il sito non lo disegna e non puo' dire con certezza se un indirizzo di periferia sia dentro o fuori. Dentro i settori ZTL e' certamente dentro.",
+      "fonte": [
+        "SV, Allegato C punto 2; corografia Elab. 07"
+      ]
+    }
+  },
+  "veicolo_utente_di_esempio": {
+    "descrizione": "Dati forniti dal progetto: Lancia Ypsilon ibrida, Euro 6, pass residenti settore B.",
+    "classe_euro": 6,
+    "alimentazione": "ibrida (benzina)",
+    "stato_dati": "classe Euro e alimentazione vanno confermate dalla carta di circolazione (campi V.9 e P.3): il progetto dice 'valori ancora da fornire'",
+    "scudo_verde": "non vietata",
+    "ztl": "accesso consentito nel settore B (transito e sosta) e transito in F e G; vietata in A e O senza altro titolo (vedi pass.B_residenti)"
+  },
+  "differenze_dal_riassunto": [
+    {
+      "id": "fascia_20",
+      "riassunto_dice": "Dal 2 aprile 2026 la fascia feriale e' estesa fino alle 20:00 e parte la ZTL notturna estiva.",
+      "fonti_dicono": "Il disciplinare (in vigore con integrazioni fino al 2020) gia' indica lunedi'-venerdi' 07:30-20:00 e la ZTL notturna estiva dal primo giovedi' di aprile. Il 2 aprile 2026 e' proprio il primo giovedi' di aprile 2026, quindi la data e' coerente con l'inizio della stagione notturna, ma non e' un cambio di orario diurno.",
+      "decisione": "Uso il disciplinare."
+    },
+    {
+      "id": "pass_B_solo_varchi_propri",
+      "riassunto_dice": "Il settore B permette l'accesso solo dai varchi del proprio settore.",
+      "fonti_dicono": "Nella Scheda 1.1 e nel punto 5 non esiste una regola sui varchi: il pass B vale per transito e sosta in B e transito in F e G, punto. Non c'e' una restrizione 'solo dai varchi del proprio settore'.",
+      "decisione": "Non codificata. Da chiarire con il Comune o con l'utente se la regola viene da un'altra fonte."
+    },
+    {
+      "id": "piazza_unita_riservata_A",
+      "riassunto_dice": "Piazza dell'Unita' e' riservata al settore A.",
+      "fonti_dicono": "Nel perimetro del settore A, piazza dell'Unita' Italiana e' indicata come 'esclusa' (cioe' fuori dal settore). Il testo non dice che sia riservata ad A.",
+      "decisione": "Non codificata. Da chiarire."
+    }
+  ],
+  "incertezze": [
+    {
+      "id": "festivi_infrasettimanali",
+      "gravita": "alta",
+      "domanda": "ZTL attiva nei festivi che cadono da lunedi' a venerdi'?"
+    },
+    {
+      "id": "domenica",
+      "gravita": "media",
+      "domanda": "Conferma che di domenica la ZTL diurna non e' attiva (il testo la esclude solo implicitamente)."
+    },
+    {
+      "id": "stagione_estremi",
+      "gravita": "media",
+      "domanda": "Il primo giovedi' di aprile e la prima domenica di ottobre sono inclusi? Interpretazione adottata: la notte del primo giovedi' e' inclusa; l'ultima notte e' quella tra sabato e domenica (fino alle 03:00 della prima domenica di ottobre)."
+    },
+    {
+      "id": "limite_antinquinamento_ztl",
+      "gravita": "media",
+      "domanda": "Soglie dell'ordinanza 2018/00301 per le autorizzazioni ZTL: testo non disponibile."
+    },
+    {
+      "id": "data_varchi_scudo_verde",
+      "gravita": "bassa",
+      "domanda": "Nei dati geografici i varchi Scudo Verde hanno data inizio 2025-07-01, mentre il provvedimento indica la decorrenza 2025-04-01. Nel sito vale 01/04/2025 (dal provvedimento); la data dei varchi e' del dataset."
+    },
+    {
+      "id": "varchi_proprio_settore",
+      "gravita": "media",
+      "domanda": "Origine della regola 'solo dai varchi del proprio settore' del riassunto."
+    },
+    {
+      "id": "sosta_F_G_pass_B",
+      "gravita": "bassa",
+      "domanda": "Il testo permette ai residenti B solo il transito in F e G, non la sosta. Va confermato che non sia consentita."
+    },
+    {
+      "id": "aggiornamenti_dopo_2020",
+      "gravita": "media",
+      "domanda": "L'ultima integrazione citata nel disciplinare e' del 2020/2022: possibili variazioni successive non coperte. Sito ufficiale del Comune non verificabile da questa sessione."
+    }
+  ],
+  "pass_catalogo": {
+    "descrizione": "Catalogo dei pass modellati dal sito. Ogni voce deriva da una scheda dell'Allegato A del disciplinare.",
+    "sosta_valori": {
+      "si": "sosta consentita",
+      "limitata": "sosta limitata (tempo o spazi riservati)",
+      "no": "sosta non consentita"
+    },
+    "non_modellati": [
+      "Scheda 4.1-4.4 e 4.5 (clienti di autorimesse, hotel, autoriparatori, autonoleggio, attivita' del settore O: regolarizzazione a ore via sms/portale)",
+      "Scheda 5.3 (ospedali e strutture sanitarie)",
+      "Scheda 5.6 (manifestazioni ed eventi)",
+      "Scheda 6.3, 6.4, 6.8 (pubbliche amministrazioni, servizi di pubblica utilita', cariche dello Stato)",
+      "Permessi giornalieri a pagamento (punto 14.1)",
+      "Autobus (disciplina 'ZTL Autobus' separata)"
+    ],
+    "voci": [
+      {
+        "ambito": "fisso",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "I residenti del settore A possono transitare e sostare in tutta la ZTL.",
+        "fonte": "DISC, Scheda 1.1; Titolo I punto 5",
+        "id": "res_A",
+        "nome": "Residente nel settore A",
+        "gruppo": "Residenti"
+      },
+      {
+        "ambito": "fisso",
+        "transito": {
+          "A": false,
+          "B": true,
+          "O": false,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "si",
+          "O": "no",
+          "F": "no",
+          "G": "no"
+        },
+        "nota": "Transito e sosta nel settore B; solo transito in F e G.",
+        "fonte": "DISC, Scheda 1.1; Titolo I punto 5",
+        "id": "res_B",
+        "nome": "Residente nel settore B",
+        "gruppo": "Residenti"
+      },
+      {
+        "ambito": "fisso",
+        "transito": {
+          "A": false,
+          "B": false,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "si",
+          "F": "no",
+          "G": "no"
+        },
+        "nota": "Transito e sosta nel settore O; solo transito in F e G. In piu' puo' percorrere l'itinerario lungarno Vespucci - piazza Goldoni - lungarno Corsini (dentro A e B), che qui non e' disegnato.",
+        "fonte": "DISC, Scheda 1.1; Titolo I punto 5",
+        "id": "res_O",
+        "nome": "Residente nel settore O (Oltrarno)",
+        "gruppo": "Residenti"
+      },
+      {
+        "ambito": "fisso",
+        "transito": {
+          "A": false,
+          "B": false,
+          "O": false,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "no",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito e sosta in F e in G.",
+        "fonte": "DISC, Scheda 1.1; Titolo I punto 5",
+        "id": "res_F",
+        "nome": "Residente nel settore F",
+        "gruppo": "Residenti"
+      },
+      {
+        "ambito": "fisso",
+        "transito": {
+          "A": false,
+          "B": false,
+          "O": false,
+          "F": false,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "no",
+          "F": "no",
+          "G": "si"
+        },
+        "nota": "Transito e sosta solo nel settore G.",
+        "fonte": "DISC, Scheda 1.1",
+        "id": "res_G",
+        "nome": "Residente nel settore G",
+        "gruppo": "Residenti"
+      },
+      {
+        "ambito": "un_settore",
+        "sosta_nel_settore": "limitata",
+        "nota": "Transito nel settore della sede; sosta solo per il tempo del carico e scarico.",
+        "fonte": "DISC, Allegato A, Scheda 3.1",
+        "id": "lav_economica",
+        "nome": "Attivita' economica con sede in ZTL (negozio, artigiano, ambulante)",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori e sosta solo per carico e scarico. Circolazione consentita fino alle 9:00 (8:30 sopra 3,5 t); nessun limite orario per veicoli elettrici, bimodali e trasporto medicinali.",
+        "fonte": "DISC, Allegato A, Scheda 3.2",
+        "orario_fino": "09:00",
+        "orario_esente_elettrici": true,
+        "id": "lav_trasporto_cose",
+        "nome": "Trasporto merci (autotrasportatori)",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "un_settore",
+        "sosta_nel_settore": "limitata",
+        "nota": "Transito nel settore del cantiere; sosta vicino al cantiere solo se autorizzata.",
+        "fonte": "DISC, Allegato A, Scheda 3.3",
+        "id": "lav_cantieri",
+        "nome": "Impresa con cantiere in ZTL",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori seguendo il percorso piu' breve per l'intervento; sosta vicino al luogo dell'intervento con contrassegno 'Riparazione d'urgenza'.",
+        "fonte": "DISC, Allegato A, Scheda 3.4",
+        "id": "lav_riparazioni",
+        "nome": "Artigiani e riparazioni d'urgenza",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori; sosta fino a 4 ore negli spazi dei residenti con orario di arrivo esposto.",
+        "fonte": "DISC, Allegato A, Scheda 3.5",
+        "id": "lav_agenti",
+        "nome": "Agenti e rappresentanti di commercio",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "no",
+          "F": "no",
+          "G": "no"
+        },
+        "nota": "Transito in tutti i settori; la sosta in strada non e' prevista.",
+        "fonte": "DISC, Allegato A, Scheda 3.7",
+        "id": "lav_autorimesse",
+        "nome": "Autorimessa commerciale (ritiro e consegna auto dei clienti)",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito in tutti i settori e sosta negli spazi dei residenti.",
+        "fonte": "DISC, Allegato A, Scheda 3.8",
+        "id": "lav_giornalisti",
+        "nome": "Giornalisti e testate (cronaca cittadina)",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "no",
+          "F": "no",
+          "G": "no"
+        },
+        "nota": "Transito in tutti i settori; solo fermata senza intralcio (le investigazioni possono sostare fino a 4 ore negli spazi dei residenti).",
+        "fonte": "DISC, Allegato A, Scheda 3.9",
+        "id": "lav_sicurezza",
+        "nome": "Vigilanza privata e investigazioni",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "non_modellato",
+        "nota": "Il contrassegno consente la sosta negli spazi dei residenti quando la ZTL non e' attiva e la circolazione durante la ZTL notturna estiva. Non e' modellato sulla mappa: i settori in cui puo' transitare non sono indicati nella scheda.",
+        "fonte": "DISC, Allegato A, Scheda 3.6",
+        "id": "lav_notturno",
+        "nome": "Lavoro notturno",
+        "gruppo": "Lavoro"
+      },
+      {
+        "ambito": "un_settore",
+        "sosta_nel_settore": "limitata",
+        "nota": "Transito nel settore della scuola; sosta massimo 30 minuti. Vale solo nei giorni di scuola.",
+        "fonte": "DISC, Allegato A, Scheda 2.1",
+        "id": "ass_scuola",
+        "nome": "Accompagnamento scolastico (asilo, infanzia, primaria in ZTL)",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "un_settore",
+        "sosta_nel_settore": "limitata",
+        "nota": "Transito nel settore di destinazione; sosta massimo 4 ore negli spazi dei residenti.",
+        "fonte": "DISC, Allegato A, Scheda 2.2",
+        "id": "ass_domiciliare",
+        "nome": "Assistenza a persone non autosufficienti residenti in ZTL",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori; sosta massimo 4 ore negli spazi dei residenti.",
+        "fonte": "DISC, Allegato A, Scheda 2.3",
+        "id": "ass_volontariato",
+        "nome": "Volontariato (ONLUS)",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori; sosta massimo 4 ore negli spazi dei residenti.",
+        "fonte": "DISC, Allegato A, Scheda 2.4",
+        "id": "ass_convenzione",
+        "nome": "Servizi assistenziali in convenzione",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito in tutti i settori e sosta negli spazi dei residenti (per i medici di base/ospedalieri titolari del permesso continuativo).",
+        "fonte": "DISC, Allegato A, Scheda 3.10",
+        "id": "sal_medici",
+        "nome": "Medici e personale sanitario",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito in tutti i settori e sosta negli spazi dei residenti (veicolo abbinato al contrassegno).",
+        "fonte": "DISC, Allegato A, Scheda 5.1",
+        "id": "sal_invalidi",
+        "nome": "Invalidi (contrassegno art. 188 CdS)",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "un_settore",
+        "sosta_nel_settore": "limitata",
+        "nota": "Transito nel settore autorizzato; sosta massimo 4 ore. Validita' massima 6 mesi.",
+        "fonte": "DISC, Allegato A, Scheda 5.2",
+        "id": "sal_impediti",
+        "nome": "Temporaneamente impediti alla deambulazione",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito in tutti i settori e sosta senza limiti di tempo negli spazi dei residenti.",
+        "fonte": "DISC, Allegato A, Scheda 5.4",
+        "id": "fam_gravidanza",
+        "nome": "Gravidanza o bambino sotto i 2 anni",
+        "gruppo": "Assistenza, salute e famiglia"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito e sosta su tutti i settori.",
+        "fonte": "DISC, Allegato A, Scheda 6.1",
+        "id": "pub_polizia",
+        "nome": "Polizia e soccorso",
+        "gruppo": "Servizi pubblici e mobilita'"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori; sosta negli spazi riservati.",
+        "fonte": "DISC, Allegato A, Scheda 6.2",
+        "id": "pub_comune",
+        "nome": "Comune di Firenze e societa' partecipate",
+        "gruppo": "Servizi pubblici e mobilita'"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "no",
+          "F": "no",
+          "G": "no"
+        },
+        "nota": "Transito in tutti i settori e nelle corsie bus; i taxi sostano solo negli spazi loro riservati, gli NCC possono solo fermarsi.",
+        "fonte": "DISC, Allegato A, Scheda 6.5",
+        "id": "pub_taxi",
+        "nome": "Taxi e NCC",
+        "gruppo": "Servizi pubblici e mobilita'"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "limitata",
+          "B": "limitata",
+          "O": "limitata",
+          "F": "limitata",
+          "G": "limitata"
+        },
+        "nota": "Transito in tutti i settori; sosta negli spazi riservati.",
+        "fonte": "DISC, Allegato A, Scheda 6.7",
+        "id": "pub_carsharing",
+        "nome": "Car sharing",
+        "gruppo": "Servizi pubblici e mobilita'"
+      },
+      {
+        "ambito": "tutti_i_settori",
+        "transito": {
+          "A": true,
+          "B": true,
+          "O": true,
+          "F": true,
+          "G": true
+        },
+        "sosta": {
+          "A": "si",
+          "B": "si",
+          "O": "si",
+          "F": "si",
+          "G": "si"
+        },
+        "nota": "Transito in tutti i settori con inserimento in lista bianca; sosta consentita anche negli spazi dei residenti.",
+        "fonte": "DISC, Allegato A, Titolo III punto 18",
+        "id": "pub_elettrico",
+        "nome": "Veicolo a 3 o 4 ruote solo elettrico per trasporto persone",
+        "gruppo": "Servizi pubblici e mobilita'"
+      },
+      {
+        "ambito": "un_settore",
+        "sosta_nel_settore": "no",
+        "nota": "Transito nel settore del garage seguendo il percorso piu' breve; la sosta e' nel proprio garage.",
+        "fonte": "DISC, Allegato A, Scheda 7.1",
+        "id": "alt_posto_auto",
+        "nome": "Posto auto o garage privato in ZTL",
+        "gruppo": "Altro"
+      },
+      {
+        "ambito": "fisso",
+        "transito": {
+          "A": false,
+          "B": false,
+          "O": false,
+          "F": false,
+          "G": false
+        },
+        "sosta": {
+          "A": "no",
+          "B": "no",
+          "O": "no",
+          "F": "no",
+          "G": "no"
+        },
+        "nota": "Senza autorizzazione non si puo' transitare ne' sostare nei settori attivi, salvo gli itinerari liberi del punto 4 e il permesso giornaliero a pagamento (punto 14.1).",
+        "fonte": "DISC, Titolo I punti 3, 4; Titolo II punto 14.1",
+        "id": "nessuno",
+        "nome": "Nessun pass",
+        "gruppo": "Altro"
+      }
+    ]
+  }
+}
